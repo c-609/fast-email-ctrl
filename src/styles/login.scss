@@ -1,0 +1,68 @@
+@import './clolor.scss';
+.submit-button{
+  width: 100%;
+  border:0px
+}
+.time{
+  color:white; 
+  float:left; 
+  margin-left:20px 
+}
+.note{
+    text-align: center;
+    width:"100%";
+    
+  }
+  .card{
+    opacity: 0.9;
+    user-select:none;
+    margin: auto auto;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    box-shadow: 0 0 30px #1f1d1d;
+  }
+
+  .index{
+    width: 500px;
+  height:500px;
+  background-color:$base-color;
+  float: left;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  }
+.login-container
+{  
+    /* border-radius: 10px; */
+    background-clip: padding-box;
+    /* margin: auto auto; */
+    float: left;
+    width: 330px;
+    height: 340px;
+    padding: 70px 85px 90px 75px;
+    background: #fff;
+    border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+    /* border: 1px solid #eaeaea; */
+    /* box-shadow: 0 0 2px #1f1d1d; */
+  }
+  .login_title {
+    margin: 0px auto 40px auto;
+    text-align: center;
+    color: #505458;
+  }
+  .login_remember {
+    margin: 0px 0px 35px 0px;
+    text-align: left;
+  }
+.pass-code .passcode{
+  width: 220px;
+  float: left;
+}
+.pass-code .code{
+  float: right;
+  width: 100px;
+  height: 40px;
+
+}

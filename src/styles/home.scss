@@ -1,0 +1,75 @@
+body{
+  margin: 0px;
+}
+
+.header,
+.layout-aside,
+.layout-main,
+.logo,
+.main-card {
+  transition: all .3s;
+}
+.container{
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background: #f0f2f5;
+}
+
+.container-collapse{
+  .header{
+    padding-left: 64px;
+  }
+  .logo{
+    width: 64px;
+  }
+  .layout-aside{
+    width: 64px
+  }
+  .layout-main{
+    left: 64px;
+    width: calc(100% - 64px);
+  }
+  
+}
+
+.header{
+  padding-left: 240px;
+  width: 100%;
+  height: 64px;
+  background: #409EFF;
+  box-sizing: border-box;
+}
+
+.tabs{
+  padding-left: 240px;
+  width: 100%;
+  background: #409EFF;
+  box-sizing: border-box;
+}
+
+.layout-aside{
+  position: fixed;
+  top: 0px;
+  width: 240px;
+  height: 100%;
+  background: #ffffff;
+  box-shadow: 2px 0 6px rgba(0,21,41,.35);
+}
+
+.layout-main{
+  position: absolute;
+  left: 240px;
+  width: calc(100% - 240px);
+  height: calc(100% - 70px);
+  box-sizing: border-box; 
+  overflow: hidden;
+}
+
+.main-card{
+  margin: 8px 10px;
+  margin-bottom: 20px;
+}
+
+
+
