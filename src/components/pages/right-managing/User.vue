@@ -10,7 +10,7 @@
           :users="users" 
           style="float:left">
         </add-user>
-        <TableSearch :tableData="users"></TableSearch>
+        <TableSearch ></TableSearch>
         <i class="el-icon-refresh refresh" @click="refresh"></i>
         <user-table :header="header" :roles="roles" ></user-table>
       </el-col>
@@ -42,10 +42,14 @@ export default {
       roles: [],
       header: [
         //  o:表示单个数值  1：表示多个数值 数组
-        {label:'账号' ,prop:'username',type:0},
-        {label:'用户角色' ,prop:'roles',type:1},
-        {label:'部门',prop:'depts',type:0},
-        {label:'状态',prop:'status',type:0},
+        {label:'ID' ,prop:'userId',type:0},
+        {label:'姓名' ,prop:'name',type:0},
+        {label:'电话',prop:'phone',type:0},
+        {label:'性别',prop:'gender',type:0},
+        {label:'年龄',prop:'age',type:0},
+        {label:'邮箱',prop:'email',type:0},
+        // {label:'部门',prop:'depts',type:0},
+        // {label:'状态',prop:'status',type:0},
         {label: '操作', prop:'operate',width:'200px',fixed:'right'}
       ],
     }

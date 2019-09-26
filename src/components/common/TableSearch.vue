@@ -13,16 +13,11 @@
 import eventBus from '../../utils/eventBus';
 export default {
     name: 'Search',
-    props: ['tableData'],
+    
     data(){
         return{
             search: '',
         }
-    },
-     created:function(){
-        eventBus.$on('tableData',res=>{
-            this.tableData=res.data.data
-        })
     },
 
     computed: {
@@ -50,11 +45,7 @@ export default {
             return this.tableData
         },
     },
-    watch:{
-        tables(){
-            eventBus.$emit('Ta',this.tables);
-        }
-    }
+    
 }
 </script>
 

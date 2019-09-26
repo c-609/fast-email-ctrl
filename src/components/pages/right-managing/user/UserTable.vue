@@ -3,7 +3,7 @@
     <el-table
       ref="dormitoryTable"
       max-height="1000"
-      :data="Tables.slice((currpage - 1) * pagesize, currpage * pagesize)"
+      :data="Tables"
       :row-class-name="tableRowClassName"
       :header-cell-style="headerColor"
       >
@@ -41,6 +41,14 @@
           <div v-else-if="item.label=='状态'">
               <div v-if="scope.row[item.prop]==0">有效</div>
               <div v-if="scope.row[item.prop]==102">锁定</div>
+          </div>
+          <div v-else-if="item.label=='性别'">
+              <div v-if="scope.row[item.prop]==1">男</div>
+              <div v-if="scope.row[item.prop]==2">女</div>
+          </div>
+          <div v-else-if="item.label=='邮箱'">
+              <div v-if="scope.row[item.prop]==null">暂无</div>
+              <div v-if="scope.row[item.prop]!=null">{{scope.row[item.prop]}}</div>
           </div>
           <div v-else>{{scope.row[item.prop]}}</div> 
           
@@ -130,19 +138,24 @@
 
 <script>
 // import {getUserMenuTree, deleteUser, updateUser} from './../../../../api/right-managing/user.js'
+import {getPageUser} from './../../../../api/right-managing/user'
 import eventBus from './../../../../utils/eventBus.js'
 import BaseTreeSelect from './UserDeptTree/../../../../common/BaseTreeSelect'
-// import {getDeptTree} from './../../../../api/right-managing/dept.js'
+import {getDeptTree} from './../../../../api/right-managing/dept.js'
   export default {
     name: 'UserTable',
     components: {BaseTreeSelect},
     inject:['reload'],
     created:function(){
-        eventBus.$on('Ta',(data)=>{
-            this.Tables=data 
-        })
+      
         getDeptTree().then(res=>{
           this.deptData = res.data.data
+          console.log("------------");
+          console.log(res.data.data);
+        }),
+        getPageUser(4,1).then(res => {
+          console.log(res.data.data);
+          this.Tables = res.data.data.records;
         })
     },
     // beforeDestroy() {
@@ -192,6 +205,7 @@ import BaseTreeSelect from './UserDeptTree/../../../../common/BaseTreeSelect'
           this.handleCurrentChange(1);
         }
     },
+    
      methods: {
         tableRowClassName({row, rowIndex}) {
         if (rowIndex %2=== 0) {

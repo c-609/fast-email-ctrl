@@ -1,13 +1,13 @@
 import request from 'axios'
 
-// 获取所有用户
-export function getUserList(){
+// 获取分页用户
+export function getPageUser(size,current){
   return request({
-    url: '/upms/user/',
-    method: 'get'
+    url:'/manage/user/page',
+    method:'get',
+    params:{size,current}
   })
 }
-
 //添加用户
 export function addUser (username,password,status,rids) {
   const data = {

@@ -3,7 +3,7 @@ import request from 'axios'
 //获取部门树
 export function getDeptTree(){
   return request({
-    url: '/upms/dept/tree',
+    url: '/manage/dept/tree',
     method: 'get',
   })
 }
