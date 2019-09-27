@@ -16,7 +16,7 @@
 </template>
 
 <script>
-// import { getDeptTree, getDeptInfo } from './../../../../api/right-managing/dept.js'
+import { getDeptTree, getDeptInfo } from './../../../../api/right-managing/dept.js'
 import eventBus from "./../../../../utils/eventBus.js"
 import DeptTools from "./DeptTools"
 export default {
@@ -76,12 +76,12 @@ export default {
 
     },
    
-    // created:function(){
-    //   getDeptTree().then(res=>{
-    //     this.deptData = res.data.data;
+    created:function(){
+      getDeptTree().then(res=>{
+        this.deptData = res.data.data;
        
-    //     })
-    // }
+        })
+    }
 }
 </script>
 

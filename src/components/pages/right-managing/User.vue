@@ -1,10 +1,10 @@
 <template>
   <div>
     <el-row class="user-table">
-      <el-col :span="4">
+      <el-col :span="5">
         <user-dept-tree style="margin-right:20px" ></user-dept-tree>
       </el-col>
-      <el-col :span="20">
+      <el-col :span="19">
         <add-user
           :roles="roles" 
           :users="users" 
@@ -44,13 +44,13 @@ export default {
         //  o:表示单个数值  1：表示多个数值 数组
         {label:'ID' ,prop:'userId',type:0},
         {label:'姓名' ,prop:'name',type:0},
-        {label:'电话',prop:'phone',type:0},
+        {label:'电话',prop:'phone',type:0,width:'150px'},
         {label:'性别',prop:'gender',type:0},
         {label:'年龄',prop:'age',type:0},
-        {label:'邮箱',prop:'email',type:0},
+        {label:'邮箱',prop:'email',type:0,width:'150px'},
         // {label:'部门',prop:'depts',type:0},
         // {label:'状态',prop:'status',type:0},
-        {label: '操作', prop:'operate',width:'200px',fixed:'right'}
+        {label: '操作', prop:'operate',width:'150px',fixed:'right'}
       ],
     }
   },
