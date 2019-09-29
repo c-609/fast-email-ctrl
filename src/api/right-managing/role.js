@@ -1,12 +1,14 @@
 import request from 'axios'
 
 //获取所有角色
-export function getRoleList () {
-    return request({
-      url: '/config/allroles',
-      method: 'get',
-    })
+export function getRoleList (size,current) {
+  return request({
+    url: '/manage/role/page',
+    method: 'get',
+    params:{size,current}
+  })
 }
+
 
 export function getRightTree(){
   return request({
