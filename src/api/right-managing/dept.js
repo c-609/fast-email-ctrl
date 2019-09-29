@@ -8,21 +8,16 @@ export function getDeptTree(){
   })
 }
 
-//根据部门id获取部门信息
-export function getDeptInfo(id){
-  return request({
-    url: '/upms/dept/'+id,
-    method:'get',
-  })
-}
 
-export function addDept(name,parentId,sort){
+
+export function addDept(name,parentId,operatorId){
   const data = {
     "name": name,
-    "parentId": parentId
+    "parentId": parentId,
+    "operatorId":operatorId
   }
   return request({
-    url: '/upms/dept/dept_add',
+    url: '/manage/dept',
     method: 'post',
     params: data,
     transformRequest: [function(){
@@ -34,23 +29,24 @@ export function addDept(name,parentId,sort){
   })
 }
 
-export function deleteDept(id){
+export function deleteDept(deptId){
   return request({
-    url: '/upms/dept/dept_delete',
-    method: 'post',
-    params: {id}
+    url: '/manage/dept',
+    method: 'delete',
+    params: {deptId}
   })
 }
 
-export function updateDept(id,name,parentId){
+export function updateDept(id,name,parentId,operatorId){
   const data = {
     "id": id,
     "name": name,
-    "parentId": parentId
+    "parentId": parentId,
+    "operatorId":operatorId
   }
   return request({
-    url: '/upms/dept/dept_update',
-    method: 'post',
+    url: '/manage/dept',
+    method: 'put',
     params: data,
     transformRequest: [function(){
       return JSON.stringify(data)

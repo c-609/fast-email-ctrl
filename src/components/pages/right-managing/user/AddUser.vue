@@ -16,7 +16,7 @@
         <!-- <el-form-item label="所属部门" prop="dept">
           <el-input type="text" v-model="userForm.dept" autocomplete="off"  v-on:click.native="deptTreeVisible='true'"></el-input>
         </el-form-item> -->
-        <el-form-item label="角色标识" prop="roles">
+        <el-form-item label="部门身份" prop="roles">
           <!-- <el-checkbox v-for="(item,index) in roles" :key="index" v-model="item.name" >{{item.nameZh}}</el-checkbox> -->
           <el-checkbox-group v-model="checkIds">
             <el-checkbox v-for="(item,index) in roles" :key="index" :label="item.id"  >{{item.nameZh}}</el-checkbox>

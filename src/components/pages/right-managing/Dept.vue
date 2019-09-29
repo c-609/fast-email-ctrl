@@ -3,8 +3,8 @@
     <el-row>
       <el-col :span="6">
         <el-row>
-          <add-parent-node></add-parent-node>
-          <add-child-node style="float:left; margin-left:20px"></add-child-node>
+          <!-- <add-parent-node></add-parent-node> -->
+          <add-child-node style="float:left; "></add-child-node>
         </el-row>
         <el-row>
           <dept-tree></dept-tree>
