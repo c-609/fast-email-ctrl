@@ -33,6 +33,7 @@
                :check-on-click-node="multiple"
                :highlight-current="true"
                @node-click="handleNodeClick"
+               @check="check"
                @check-change="handleCheckChange"></el-tree>
       <el-select :style="selectStyle" slot="reference" ref="select" :size="size"
                  v-model="selectedData"
@@ -44,7 +45,7 @@
                  @clear="removeSelectedNode"
                  @change="changeSelectedNodes"
                  class="tree-select">
-        <el-option v-for="item in options" :key="item.id" :label="item.name" :value="item.id"></el-option>
+        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
       </el-select>
     </el-popover>
   </div>
@@ -142,6 +143,10 @@ export default {
     this.initCheckedData();
   },
   methods: {
+    check(node,tree){
+      this.$emit("check",node,tree);
+    },
+
     // 单选时点击tree节点，设置select选项
     setSelectOption (node) {
       let tmpMap = {};
@@ -222,6 +227,7 @@ export default {
       this.selectedData = this.options.map((item) => {
         return item.value;
       });
+      console.log(this.options)
       this.$emit('change', this.selectedData);
     },
     // 多选,删除任一select选项的回调

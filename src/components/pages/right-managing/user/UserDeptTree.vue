@@ -20,6 +20,7 @@
 
 <script>
 import { getDeptTree } from "./../../../../api/right-managing/dept.js";
+
 // import {getListByDeptId} from './../../../../api/right-managing/user.js'
 import eventBus from "./../../../../utils/eventBus.js";
 export default {
