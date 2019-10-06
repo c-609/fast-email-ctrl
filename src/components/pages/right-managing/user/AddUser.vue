@@ -34,9 +34,7 @@
             @node-click="handleNodeClick"
             @popoverHide="popoverHide"
           ></base-tree-select>
-          <el-select v-model="value1" multiple placeholder="请选择">
-            
-          </el-select>
+         
         </el-form-item>
         <el-form-item label="用户状态" :label-width="formLabelWidth">
           <el-switch
@@ -56,7 +54,7 @@
       </el-form>
     </el-dialog>
 
-    <el-dialog title="选择部门" :visible.sync="deptTreeVisible" @close="closedeptTree">
+    <!-- <el-dialog title="选择部门" :visible.sync="deptTreeVisible" @close="closedeptTree">
       <el-tree
         node-key="id"
         show-checkbox
@@ -67,7 +65,7 @@
         :expand-on-click-node="false"
         default-expand-all
       ></el-tree>
-    </el-dialog>
+    </el-dialog> -->
     <el-dialog title="选择身份" :visible.sync="identifyVisible" @close="closeIdentify">
       <el-checkbox-group v-model="checkIds">
         <el-checkbox v-for="(item,index) in roles" :key="index" :label="item.id">{{item.name}}</el-checkbox>
