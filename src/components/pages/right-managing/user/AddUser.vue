@@ -2,7 +2,13 @@
   <div style="margin-right:20px">
     <el-button type="primary" @click="addBtn" icon="el-icon-edit" size="mini">添加用户</el-button>
 
-    <el-dialog title="新增" :visible.sync="userFormVisible" @close="closeDialog">
+    <el-dialog
+      title="新增"
+      :visible.sync="userFormVisible"
+      :close-on-click-modal="false"
+      v-model="userFormVisible"
+      @close="closeDialog"
+    >
       <el-form
         :model="userForm"
         status-icon
@@ -20,21 +26,13 @@
         <el-form-item label="确认密码" prop="passWord2">
           <el-input type="password" v-model="userForm.passWord2" autocomplete="off"></el-input>
         </el-form-item>
-        <!-- <el-form-item label="所属部门" prop="dept">
-          <el-input type="text" v-model="userForm.dept" autocomplete="off"  v-on:click.native="deptTreeVisible='true'"></el-input>
-        </el-form-item>-->
         <el-form-item label="部门身份" prop="roles">
           <base-tree-select
             :data="deptData"
+            :roles="roles"
+            :options="tags"
             :defaultProps="deptProps"
-            multiple
-            checkStrictly
-            nodeKey="id"
-            @check="selectIdentify"
-            @node-click="handleNodeClick"
-            @popoverHide="popoverHide"
           ></base-tree-select>
-         
         </el-form-item>
         <el-form-item label="用户状态" :label-width="formLabelWidth">
           <el-switch
@@ -53,24 +51,6 @@
         </el-form-item>
       </el-form>
     </el-dialog>
-
-    <!-- <el-dialog title="选择部门" :visible.sync="deptTreeVisible" @close="closedeptTree">
-      <el-tree
-        node-key="id"
-        show-checkbox
-        :data="treeDeptData"
-        :props="deptProps"
-        @check="selectIdentify"
-        @change="handleNodeClick"
-        :expand-on-click-node="false"
-        default-expand-all
-      ></el-tree>
-    </el-dialog> -->
-    <el-dialog title="选择身份" :visible.sync="identifyVisible" @close="closeIdentify">
-      <el-checkbox-group v-model="checkIds">
-        <el-checkbox v-for="(item,index) in roles" :key="index" :label="item.id">{{item.name}}</el-checkbox>
-      </el-checkbox-group>
-    </el-dialog>
   </div>
 </template>
 
@@ -80,6 +60,7 @@ import BaseTreeSelect from "../../../common/BaseTreeSelect";
 import { getRoleList } from "./../../../../api/right-managing/role.js";
 import { addUser } from "../../../../api/right-managing/user.js";
 import { getkeys, cleanKeys } from "../../../../utils/getKeys";
+import eventBus from "../../../../utils/eventBus";
 export default {
   components: {
     BaseTreeSelect
@@ -94,8 +75,10 @@ export default {
     getDeptTree().then(res => {
       this.deptData = res.data.data;
     });
-
-
+    getRoleList(20, 1).then(data => {
+      this.roles = data.data.data.records;
+      console.log(data);
+    });
   },
   data() {
     var i = 0;
@@ -134,15 +117,9 @@ export default {
         callback();
       }
     };
-    // var validateDept = (rule, value, callback) => {
-    //   if (value === '') {
-    //     callback(new Error('请选择部门'));
-    //   } else {
-    //     callback();
-    //   }
-    // };
     return {
       roles: [],
+      tags: [],
       treeDeptData: "",
       checkIds: [],
       deptTreeVisible: false,
@@ -179,67 +156,41 @@ export default {
     addBtn() {
       this.userFormVisible = true;
       this.treeDeptData = getkeys(this.deptData);
-      getRoleList(20, 1).then(data => {
-        this.roles = data.data.data.records;
-        console.log(data);
-      });
-    },
-popoverHide (checkedIds, checkedData) {
-  
-         console.log(checkedIds);
-         console.log(checkedData);
-      },
-     
-    selectIdentify(node, tree) {
-      var id = node.id;
-      for (var i = 0; i < tree.checkedKeys.length; i++) {
-        if (id == tree.checkedKeys[i]) {
-          this.identifyVisible = true;
-          this.checkIds = [];
-          break;
-        }
-      }
-    },
-
-    closedeptTree() {
-      this.deptTreeVisible = false;
-    },
-    closeIdentify(){
-
-    },
-    handleNodeClick(data) {
-      this.userForm.dept = data.name;
-      // this.deptTreeVisible = false;
     },
     closeDialog() {
+      this.tags = [];
       this.resetForm("userForm");
     },
     submitForm(formName) {
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          var roles = [];
-          roles = this.checkIds;
-          addUser(
-            this.userForm.account,
-            this.userForm.passWord1,
-            this.userForm.status,
-            roles.join(",")
-          ).then(res => {
-            this.reload();
-            if (res && res.data.data != 0) {
-              this.$message({
-                type: "success",
-                message: "添加用户成功"
-              });
-            } else {
-              this.$message.error("添加失败");
-            }
-          });
-          this.userFormVisible = false;
-        } else {
-          return false;
-        }
-      });
+      if (this.tags.length == 0) {
+        // this.hint = "请选择部门身份";
+      } else {
+        this.$refs[formName].validate(valid => {
+          if (valid) {
+            var roles = [];
+            roles = this.checkIds;
+            addUser(
+              this.userForm.account,
+              this.userForm.passWord1,
+              this.userForm.status,
+              roles.join(",")
+            ).then(res => {
+              this.reload();
+              if (res && res.data.data != 0) {
+                this.$message({
+                  type: "success",
+                  message: "添加用户成功"
+                });
+              } else {
+                this.$message.error("添加失败");
+              }
+            });
+            this.userFormVisible = false;
+          } else {
+            return false;
+          }
+        });
+      }
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();

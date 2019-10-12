@@ -5,7 +5,8 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
 	state: {
-		isCollapse:false
+		isCollapse:false,
+		options:[],
 	},
 	mutations: {
 		login(state,code) {
@@ -16,7 +17,9 @@ export default new Vuex.Store({
 		},
 		setCollapse(state){
 			state.isCollapse = !state.isCollapse;
-			
+		},
+		setOptions(state,options){
+			state.options = options;
 		}
 	}
 })
