@@ -11,7 +11,7 @@
 
 <script>
 import eventBus from "./../../../../utils/eventBus.js"
-import { deleteDept} from '../../../../api/right-managing/dept';
+import { deleteDept, updateDept} from '../../../../api/right-managing/dept';
 export default {
   name:'DeptTools',
   inject:['reload'],

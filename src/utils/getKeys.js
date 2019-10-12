@@ -10,6 +10,3 @@ export function getkeys(children) {
     }
     return children;
 }
-// export function cleanKeys(){
-//   expandedKeys = [];
-// }
