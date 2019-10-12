@@ -2,7 +2,7 @@
   <div>
     <el-table
     ref="dormitoryTable"
-      :data="Tables.slice((currpage - 1) * pagesize, currpage * pagesize)"
+      :data="Tables"
       border
       style="width: 100%"
       :row-style="{height:'0'}"
@@ -24,32 +24,28 @@
         <template slot-scope="scope">
           <div>{{scope.row[item.prop]}}</div> 
           <el-button @click="handleEdit(scope.row)" type="text" size="small" v-if="item.prop=='operate'">编辑</el-button>
-          <el-button @click="handleEditRirhts(scope.row)" type="text" size="small" v-if="item.prop=='operate'">修改权限</el-button>
           <el-button @click="handleDelete(scope.row.id)" type="text" size="small" v-if="item.prop=='operate'">删除</el-button>
        </template>  
       </el-table-column>   
     </el-table>
 
-    <el-dialog title="编辑角色" :visible.sync="isAddRoleForm" @close="closeEditDialog">
+    <el-dialog title="编辑角色" :visible.sync="isAddRoleForm" @close="closeEditDialog" width="30%">
       <el-form :model="roleForm" status-icon :rules="rules" ref="roleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="角色标识" prop="role" >
-          <el-input type="text" v-model="roleForm.role" disabled autocomplete="off"></el-input>
+          <el-input type="text" v-model="roleForm.role"  autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="角色描述" prop="roleZh">
           <el-input type="text" v-model="roleForm.roleZh" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="数据权限" prop="auth">
-          <el-tree
-            :data="deptData" 
-            :props="deptProps" 
-            ref="deptData"
-            show-checkbox
-            check-strictly=true
-            node-key="id"
-            :default-expand-all="true"
-            :default-checked-keys="defaultCheckedKeys"
-             >
-          </el-tree>
+        <el-form-item label="角色权限" prop="auth">
+          <el-select v-model="item" placeholder="请选择">
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitForm('roleForm')">提交</el-button>
@@ -80,14 +76,14 @@
     <div>
       	<el-pagination background
             :current-page=currpage
-			layout="prev, pager, next, sizes, total, jumper"
-			:page-sizes="[2, 4, 6, 8]"
-			:page-size="pagesize"
-			:total="Tables.length"
-			@current-change="handleCurrentChange"  
-			@size-change="handleSizeChange" 
-			>
-		</el-pagination>
+          layout="prev, pager, next, sizes, total, jumper"
+          :page-sizes="[2, 4, 6, 8]"
+          :page-size="pagesize"
+          :total="total"
+          @current-change="handleCurrentChange"  
+          @size-change="handleSizeChange" 
+          >
+        </el-pagination>
     </div>
   </div>
 </template>
@@ -98,26 +94,19 @@
 import eventBus from './../../../../utils/eventBus.js';
 import EditRoleForm  from './EditRoleForm'
 import BaseTreeSelect from './../../../common/BaseTreeSelect'
-// import {getDeptTree} from './../../../../api/right-managing/dept.js'
+// import {getDeptTree} from './../../../../api/right-managing/dept.js'\
+import {getRoleList, deleteRole,updateRole} from '../../../../api/right-managing/role'
   export default {
     name: 'BasicTable',
     props: ['header'],
     components: {EditRoleForm, BaseTreeSelect},
     inject:['reload'],
-    // created:function(){
-    //   eventBus.$on('Ta',(data)=>{
-    //     this.Tables=data
-    //   })
-    //   getRightTree().then(res=>{
-    //     this.menuData = res.data.data;
-    //   })
-    //   getDeptTree().then(res=>{
-    //       this.deptData = res.data.data;
-    //     });
-    // },
-    // beforeDestroy() {
-    //   eventBus.$off('Ta');
-    // },
+    created:function(){
+      getRoleList(this.pagesize,this.currpage).then(res=>{
+          this.Tables=res.data.data.records;
+          this.total = res.data.data.total;
+        })
+    },
      data() {
       var checkRoleZh = (rule, value, callback)=>{
         if(!value){
@@ -127,12 +116,22 @@ import BaseTreeSelect from './../../../common/BaseTreeSelect'
         }
       };
       return { 
+        item:'',
+        options: [{
+          value: '0',
+          label: '当前机构'
+        }, {
+          value: '1',
+          label: '同级机构'
+        } 
+        ],
         rules:{
           roleZh:[{validator: checkRoleZh, trigger: 'blur'}]
         },
         Tables:[],
-        search: '',   
-        pagesize: 8,
+        search: '',  
+        total:'', 
+        pagesize: 4,
 		    currpage: 1,
         dialogTransferVisible: false,
         deptData: [],
@@ -168,17 +167,21 @@ import BaseTreeSelect from './../../../common/BaseTreeSelect'
             return this.Tables;
         }
     },
-    watch:{
-        TablesChange(){
-           this.handleCurrentChange(1);
-        }
-    },
+  
      methods: {
        handleCurrentChange(cpage) {
-					this.currpage = cpage;
+          this.currpage = cpage;
+          getRoleList(this.pagesize,this.currpage).then(res=>{
+          this.Tables=res.data.data.records;
+          this.total = res.data.data.total;
+        })
 				},
 				handleSizeChange(psize) {
-					this.pagesize = psize;
+        this.pagesize = psize;
+        getRoleList(this.pagesize,this.currpage).then(res=>{
+          this.Tables=res.data.data.records;
+          this.total = res.data.data.total;
+        })
         },
 
         //编辑
@@ -189,18 +192,27 @@ import BaseTreeSelect from './../../../common/BaseTreeSelect'
         handleEdit(row){
           this.roles = row;
           this.roleForm.id = row.id;
-          this.roleForm.role = row.name;
-          this.roleForm.roleZh = row.nameZh;
-          getRoleDept(row.id).then(res=>{        
-            this.defaultCheckedKeys = res.data.data;
-          });
+          this.roleForm.role = row.roleName;
+          this.roleForm.roleZh = row.name;
+        
           this.isAddRoleForm = true;
         },
         submitForm(roleForm){
           var _this = this;
           this.$refs[roleForm].validate((valid)=>{
             if(valid){
-              updateRole(this.roleForm.id, this.roleForm.role, this.roleForm.roleZh).then((res)=>{
+              let levelName = '';
+              if(this.item == 0){
+                levelName = "当前部门"
+              }else if(this.item == 1){
+                levelName = "同级部门"
+              }else{
+                levelName = "weizhi"
+              }
+              console.log(this.roleForm.id);
+              console.log( this.roleForm.role);
+              console.log(this.roleForm.roleZh)
+              updateRole(this.roleForm.id, this.roleForm.role, this.roleForm.roleZh,0,this.item,levelName,2).then((res)=>{
                 console.log(res)
                 if(status!=200){
                   _this.$message({
@@ -262,13 +274,7 @@ import BaseTreeSelect from './../../../common/BaseTreeSelect'
         closeDialog(){
           this.$refs.menuData.setCheckedKeys([]);  
         },
-        handleEditRirhts(row){
-          this.dialogTransferVisible=true;
-          this.rid = row.id;     
-          getRoleRight(this.rid).then(res=>{     
-            this.defaultChecked = res.data.data ;
-          }) 
-        },
+       
         handleDialogSure(){
           var m = this.$refs.menuData.getCheckedKeys().concat(this.$refs.menuData.getHalfCheckedKeys());
           var mids = m.join(",")

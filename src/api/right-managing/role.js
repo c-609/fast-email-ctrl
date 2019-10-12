@@ -1,10 +1,11 @@
 import request from 'axios'
 
 //获取所有角色
-export function getRoleList () {
+export function getRoleList (size,current) {
     return request({
-      url: '/config/allroles',
+      url: '/manage/role/page',
       method: 'get',
+      params:{size,current}
     })
 }
 
@@ -16,20 +17,49 @@ export function getRightTree(){
 }
 
 // 添加角色
-export function addRole(role, roleZh){
+export function addRole(name,roleName,status,level,levelName,operatorId){
+  const data = {
+    "name": name,
+    "roleName": roleName,
+    "status":status,
+    "level":level,
+    "levelName":levelName,
+    "operatorId":operatorId
+  }
   return request({
-    url: '/upms/role/add',
+    url: '/manage/role',
     method: 'post',
-    params: {role, roleZh}
+    params: data,
+    transformRequest: [function(){
+      return JSON.stringify(data)
+    }],
+    headers: {
+      'Content-Type' : 'application/json;'
+    }
   })
 }
 
 //更新角色
-export function updateRole(id, name,nameZh) {
+export function updateRole(id,name,roleName,status,level,levelName,operatorId){
+  const data = {
+    "id":id,
+    "roleName": roleName,
+    "name": name,
+    "status":status,
+    "level":level,
+    "levelName":levelName,
+    "operatorId":operatorId
+  }
   return request({
-    url: '/upms/role/update',
-    method: 'post',
-    params: {id, name,nameZh}
+    url: '/manage/role',
+    method: 'put',
+    params: data,
+    transformRequest: [function(){
+      return JSON.stringify(data)
+    }],
+    headers: {
+      'Content-Type' : 'application/json;'
+    }
   })
 }
 
@@ -43,11 +73,11 @@ export function updateRoleDept(rid,deptIds) {
 }
 
 // 根据id删除角色
-export function deleteRole(rid) {
+export function deleteRole(roleId) {
   return request({
-    url: '/upms/role/delete',
-    method: 'post',
-    params: {rid}
+    url: '/manage/role',
+    method: 'delete',
+    params: {roleId}
   })
 }
 

@@ -2,13 +2,23 @@
   <div>
     <el-button type="primary" @click="dialogFormVisible = true" icon="el-icon-edit" size="mini">添加角色</el-button>
 
-    <el-dialog title="添加角色" :visible.sync="dialogFormVisible" @close='closeDialog'>
+    <el-dialog title="添加角色" :visible.sync="dialogFormVisible" @close='closeDialog' width="30%">
       <el-form :model="roleForm" status-icon :rules="rules" ref="roleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="角色标识" prop="role">
           <el-input type="text" v-model="roleForm.role" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="角色描述" prop="roleZh">
           <el-input type="text" v-model="roleForm.roleZh" autocomplete="off"></el-input>
+        </el-form-item>
+          <el-form-item label="角色权限" >
+        <el-select v-model="item" placeholder="请选择">
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitForm('roleForm')">提交</el-button>
@@ -68,6 +78,15 @@ import {addRole} from './../../../../api/right-managing/role.js'
         }
       };
       return {
+        options: [{
+          value: '0',
+          label: '当前机构'
+        }, {
+          value: '1',
+          label: '同级机构'
+        } 
+        ],
+        item:'',
         dialogFormVisible: false,
         formLabelWidth: '120px',
         roleForm: {
@@ -91,10 +110,20 @@ import {addRole} from './../../../../api/right-managing/role.js'
         this.roleForm.roleZh = '';
        },
       submitForm(formName) {
+        console.log(this.item);
        var  _this = this;
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            addRole(this.roleForm.role,this.roleForm.roleZh).then((res)=>{
+            let levelName = '';
+            if(this.item == 0){
+              levelName = "当前部门"
+            }else if(this.item == 1){
+              levelName = "同级部门"
+            }else{
+              levelName = "weizhi"
+            }
+            addRole(this.roleForm.roleZh,this.roleForm.role,0,this.item,levelName,2).then((res)=>{
+              console.log(res);
               if(res.data.data===1){
                 _this.$message({
                   type:'info',

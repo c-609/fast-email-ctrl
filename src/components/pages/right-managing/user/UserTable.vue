@@ -145,7 +145,7 @@ export default {
   created: function() {
     getPageUser(4, 1).then(res => {
       console.log(res.data.data);
-      this.Tables = res.data.data.records;
+      this.Tables = res.data.data.list;
     });
   },
   // beforeDestroy() {
