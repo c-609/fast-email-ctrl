@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import {logOut, getUser} from './../../../../api/login.js'
+
 import eventBus from './../../../../utils/eventBus.js'
 export default {
     name: 'PersonalInfo',
@@ -53,9 +53,7 @@ export default {
       }
     },
     created:function(){
-      getUser().then((res)=>{
-        this.user=res.data.data;
-      });
+     
     }
 }
 </script>

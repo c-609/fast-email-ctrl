@@ -76,10 +76,10 @@
     <div>
       	<el-pagination background
             :current-page=currpage
-          layout="prev, pager, next, sizes, total, jumper"
+          layout="prev, pager, next, sizes,total, jumper"
           :page-sizes="[2, 4, 6, 8]"
           :page-size="pagesize"
-          :total="total"
+          :total="totalPage"
           @current-change="handleCurrentChange"  
           @size-change="handleSizeChange" 
           >
@@ -104,7 +104,7 @@ import {getRoleList, deleteRole,updateRole} from '../../../../api/right-managing
     created:function(){
       getRoleList(this.pagesize,this.currpage).then(res=>{
           this.Tables=res.data.data.records;
-          this.total = res.data.data.total;
+          this.totalPage = res.data.data.total;
         })
     },
      data() {
@@ -130,7 +130,7 @@ import {getRoleList, deleteRole,updateRole} from '../../../../api/right-managing
         },
         Tables:[],
         search: '',  
-        total:'', 
+        totalPage:"", 
         pagesize: 4,
 		    currpage: 1,
         dialogTransferVisible: false,
@@ -173,14 +173,14 @@ import {getRoleList, deleteRole,updateRole} from '../../../../api/right-managing
           this.currpage = cpage;
           getRoleList(this.pagesize,this.currpage).then(res=>{
           this.Tables=res.data.data.records;
-          this.total = res.data.data.total;
+          this.totalPage = res.data.data.total;
         })
 				},
 				handleSizeChange(psize) {
         this.pagesize = psize;
         getRoleList(this.pagesize,this.currpage).then(res=>{
           this.Tables=res.data.data.records;
-          this.total = res.data.data.total;
+          this.totalPage = res.data.data.total;
         })
         },
 

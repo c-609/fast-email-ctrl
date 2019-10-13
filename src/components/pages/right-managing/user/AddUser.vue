@@ -3,6 +3,7 @@
     <el-button type="primary" @click="addBtn" icon="el-icon-edit" size="mini">添加用户</el-button>
 
     <el-dialog
+    width="40%"
       title="新增"
       :visible.sync="userFormVisible"
       :close-on-click-modal="false"
@@ -10,21 +11,38 @@
       @close="closeDialog"
     >
       <el-form
+        size="mini"
         :model="userForm"
         status-icon
         :rules="rules2"
         ref="userForm"
-        label-width="100px"
+        label-width="80px"
         class="demo-ruleForm"
       >
-        <el-form-item label="账户" prop="account">
-          <el-input type="text" v-model="userForm.account" autocomplete="off"></el-input>
+        <el-form-item label="*账户" prop="account">
+          <el-input type="text" v-model="userForm.account" autocomplete="off" size="mini"></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="passWord1">
-          <el-input type="password" v-model="userForm.passWord1" autocomplete="off"></el-input>
+        <el-form-item label="*密码" prop="passWord1">
+          <el-input type="password" v-model="userForm.passWord1" autocomplete="off" size="mini"></el-input>
         </el-form-item>
-        <el-form-item label="确认密码" prop="passWord2">
-          <el-input type="password" v-model="userForm.passWord2" autocomplete="off"></el-input>
+        <el-form-item label="*确认密码" prop="passWord2">
+          <el-input type="password" v-model="userForm.passWord2" autocomplete="off" size="mini"></el-input>
+        </el-form-item>
+        <el-form-item label="*姓名" prop="name">
+          <el-input type="text" v-model="userForm.name" autocomplete="off" size="mini"></el-input>
+        </el-form-item>
+        <el-form-item label="电话" prop="tel">
+          <el-input type="text" v-model="userForm.tel" autocomplete="off" size="mini"></el-input>
+        </el-form-item>
+        <el-form-item label="年龄" prop="age">
+          <el-input type="text" v-model="userForm.age" autocomplete="off" size="mini"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input type="text" v-model="userForm.email" autocomplete="off" size="mini"></el-input>
+        </el-form-item>
+        <el-form-item label="性别" prop="gender">
+          <el-radio v-model="radio" label="1">男</el-radio>
+          <el-radio v-model="radio" label="2">女</el-radio>
         </el-form-item>
         <el-form-item label="部门身份" prop="roles">
           <base-tree-select
@@ -77,7 +95,6 @@ export default {
     });
     getRoleList(20, 1).then(data => {
       this.roles = data.data.data.records;
-      console.log(data);
     });
   },
   data() {
@@ -117,7 +134,15 @@ export default {
         callback();
       }
     };
+    var validateName = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("姓名不能为空"));
+      } else {
+        callback();
+      }
+    };
     return {
+      radio:1,
       roles: [],
       tags: [],
       treeDeptData: "",
@@ -134,7 +159,12 @@ export default {
         admin: "",
         superuser: "",
         user: "",
-        status: 0
+        status: 0,
+        name:'',
+        tel:'',
+        gender:'',
+        age:'',
+        email:''
       },
       deptData: "",
       deptProps: {
@@ -145,7 +175,8 @@ export default {
       rules2: {
         account: [{ validator: validateAcount, trigger: "blur" }],
         passWord2: [{ validator: validatePass2, trigger: "blur" }],
-        passWord1: [{ validator: validatePass, trigger: "blur" }]
+        passWord1: [{ validator: validatePass, trigger: "blur" }],
+        name:[{ validator: validateName, trigger: "blur" }]
         // dept: [
         //   { validator: validateDept, trigger: 'blur' }
         // ]
@@ -167,25 +198,7 @@ export default {
       } else {
         this.$refs[formName].validate(valid => {
           if (valid) {
-            var roles = [];
-            roles = this.checkIds;
-            addUser(
-              this.userForm.account,
-              this.userForm.passWord1,
-              this.userForm.status,
-              roles.join(",")
-            ).then(res => {
-              this.reload();
-              if (res && res.data.data != 0) {
-                this.$message({
-                  type: "success",
-                  message: "添加用户成功"
-                });
-              } else {
-                this.$message.error("添加失败");
-              }
-            });
-            this.userFormVisible = false;
+           
           } else {
             return false;
           }

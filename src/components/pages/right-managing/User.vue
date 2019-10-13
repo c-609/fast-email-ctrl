@@ -21,7 +21,7 @@
 
 <script>
 // import {getRoleList} from './../../../api/right-managing/role.js'
-// import {getUserList} from './../../../api/right-managing/user.js'
+
 import UserTable from './user/UserTable'
 import UserDeptTree from './user/UserDeptTree'
 import AddUser from './user/AddUser'
@@ -48,7 +48,7 @@ export default {
         {label:'性别',prop:'gender',type:0},
         {label:'年龄',prop:'age',type:0},
         {label:'邮箱',prop:'email',type:0,width:'150px'},
-        // {label:'部门',prop:'depts',type:0},
+        {label:'身份',prop:'identityEntities',type:1,},
         // {label:'状态',prop:'status',type:0},
         {label: '操作', prop:'operate',width:'150px',fixed:'right'}
       ],
@@ -56,12 +56,7 @@ export default {
   },
 
   mounted:function(){
-    // getUserList().then((res)=>{
-    //   this.users=res.data.data;
-    // });
-    // getRoleList().then((data)=>{
-    //   this.roles=data.data.data;    
-    // });
+ 
   },
   
   methods:{

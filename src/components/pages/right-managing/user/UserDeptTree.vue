@@ -11,7 +11,6 @@
         :props="deptProps"
         @node-click="getNodeData"
         :expand-on-click-node="false"
-        :render-content="renderContent"
         default-expand-all
       ></el-tree>
     </el-card>
@@ -21,13 +20,13 @@
 <script>
 import { getDeptTree } from "./../../../../api/right-managing/dept.js";
 
-// import {getListByDeptId} from './../../../../api/right-managing/user.js'
+import {getListByDeptId} from './../../../../api/right-managing/dept.js'
 import eventBus from "./../../../../utils/eventBus.js";
 export default {
   name: "UserDeptTree",
   data() {
     return {
-      deptData: "",
+      deptData: [],
       deptProps: {
         label: "name",
         children: "children"
@@ -40,11 +39,12 @@ export default {
     });
   },
   methods: {
-    // getNodeData(data){
-    //   getListByDeptId(data.id).then(res=>{
-    //     eventBus.$emit('tableData',res)
-    //   })
-    // }
+    getNodeData(item){
+      getListByDeptId(item.id).then(res=>{
+        console.log(res.data.data)
+        eventBus.$emit('tableData',res.data.data)
+      })
+    }
     // renderContent(data){
     //   console.log(data)
     // }

@@ -15,7 +15,7 @@
   </div>
 </template>
 <script>
-// import {getUser} from './../../../../api/login.js'
+
   export default {
     name: 'InfoManage',
     data() {
@@ -62,9 +62,7 @@
       }
     },
     created:function(){
-      // getUser().then((res)=>{
-      //   this.ruleForm.userName=res.data.data.username;
-      // });
+     
     }
   }
 </script>

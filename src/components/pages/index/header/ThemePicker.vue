@@ -31,7 +31,7 @@ export default {
   },
   data() {
     return {
-      default:'',
+      default_color:'',
       chalk: '', // content of theme-chalk css
       theme: ORIGINAL_THEME,
       //theme:""+localStorage.getItem("tremePackers")+"",
@@ -40,21 +40,21 @@ export default {
   },
   created(){
     if(localStorage.getItem("tremePackers") == null){
-      this.default = '#409EFF';
+      this.default_color = '#409EFF';
     }else{
-      this.default= ""+localStorage.getItem("tremePackers")+""
+      this.default_color= ""+localStorage.getItem("tremePackers")+""
     }
 
   },
      
 
   mounted() {
-    if(this.default != null) {
-      this.theme = this.default;
+    if(this.default_color != null) {
+      this.theme = this.default_color;
      // this.ORIGINAL_THEME = this.default;
       this.$emit('onThemeChange', this.theme);
       // alert("fff")
-      console.log(this.default);
+      console.log(this.default_color);
       this.showSuccess = false;
     }
   },

@@ -19,22 +19,30 @@
         :fixed="item.fixed"
       >
         <template slot-scope="scope">
-          <div v-if="item.label=='部门'">
-            {{scope.row[item.prop][0].name}}
-            <div v-for="(i,index) in scope.row[item.prop]" :key="index">
-              <!-- {{scope.row[item.prop][index].name}} -->
+          <div v-if="item.label=='身份'">
+            <el-popover
+              placement="right"
+              width="150"
+              trigger="hover">
+             <div v-for="(i,index) in scope.row[item.prop]" :key="index">
+              {{scope.row[item.prop][index].deptName}}{{scope.row[item.prop][index].roleCNName}}
             </div>
+              <el-button slot="reference" size="mini">查看</el-button>
+            </el-popover>
+            <!-- <div v-for="(i,index) in scope.row[item.prop]" :key="index">
+              {{scope.row[item.prop][index].deptName}}{{scope.row[item.prop][index].roleCNName}}
+            </div> -->
           </div>
-          <div v-else-if="item.type==1">
+          <!-- <div v-else-if="item.type==1">
             {{scope.row[item.prop][0].nameZh}}
             <div v-for="(i,index) in scope.row[item.prop]" :key="index">
-              <!-- {{scope.row[item.prop][index].nameZh}} -->
+              {{scope.row[item.prop][index].nameZh}}
             </div>
-          </div>
-          <div v-else-if="item.label=='状态'">
+          </div> -->
+          <!-- <div v-else-if="item.label=='状态'">
             <div v-if="scope.row[item.prop]==0">有效</div>
             <div v-if="scope.row[item.prop]==102">锁定</div>
-          </div>
+          </div> -->
           <div v-else-if="item.label=='性别'">
             <div v-if="scope.row[item.prop]==1">男</div>
             <div v-if="scope.row[item.prop]==2">女</div>
@@ -45,12 +53,12 @@
           </div>
           <div v-else>{{scope.row[item.prop]}}</div>
 
-          <el-button
+          <!-- <el-button
             @click="handleView(scope.row.id)"
             type="text"
             size="small"
             v-if="item.prop=='operate'"
-          >查看</el-button>
+          >查看</el-button> -->
           <el-button
             @click="handleEdit( scope.row)"
             type="text"
@@ -133,8 +141,7 @@
 </template>
 
 <script>
-// import {getUserMenuTree, deleteUser, updateUser} from './../../../../api/right-managing/user.js'
-import { getPageUser } from "./../../../../api/right-managing/user";
+import { getPageUser,deleteUser } from "./../../../../api/right-managing/user";
 import eventBus from "./../../../../utils/eventBus.js";
 import BaseTreeSelect from "./UserDeptTree/../../../../common/BaseTreeSelect";
 import { getDeptTree } from "./../../../../api/right-managing/dept.js";
@@ -144,13 +151,15 @@ export default {
   inject: ["reload"],
   created: function() {
     getPageUser(4, 1).then(res => {
-      console.log(res.data.data);
       this.Tables = res.data.data.list;
     });
+    eventBus.$on('tableData',(res)=>{
+      this.Tables=res
+      })
   },
-  // beforeDestroy() {
-  //   eventBus.$off('Ta');
-  // },
+  beforeDestroy() {
+    eventBus.$off('tableData');
+  },
   data() {
     return {
       deptData: "",
@@ -185,16 +194,7 @@ export default {
     };
   },
   props: ["header", "roles"],
-  computed: {
-    TablesChange() {
-      return this.Tables;
-    }
-  },
-  watch: {
-    TablesChange() {
-      this.handleCurrentChange(1);
-    }
-  },
+ 
 
   methods: {
     tableRowClassName({ row, rowIndex }) {
@@ -222,26 +222,34 @@ export default {
     },
     handleCurrentChange(cpage) {
       this.currpage = cpage;
+      getPageUser(this.pagesize, this.currpage).then(res => {
+        console.log(res.data.data);
+        this.Tables = res.data.data.list;
+      });
     },
     handleSizeChange(psize) {
       this.pagesize = psize;
+      getPageUser(this.pagesize, this.currpage).then(res => {
+        console.log(res.data.data);
+        this.Tables = res.data.data.list;
+      });
     },
-    // handleDelete(id) {
-    //   var _this = this;
-    //   this.$confirm('是否删除此用户?', '提示', {
-    //     confirmButtonText: '确定',
-    //     type: 'warning'
-    // }).then(() => {
-    //   deleteUser(id).then((res)=>{
-    //     this.reload();
-    //   });
-    // }).catch(() => {
-    //   _this.$message({
-    //     type: 'info',
-    //     message: '取消'
-    //   });
-    // });
-    // },
+    handleDelete(id) {
+      var _this = this;
+      this.$confirm('是否删除此用户?', '提示', {
+        confirmButtonText: '确定',
+        type: 'warning'
+    }).then(() => {
+      deleteUser(id).then((res)=>{
+        this.reload();
+      });
+    }).catch(() => {
+      _this.$message({
+        type: 'info',
+        message: '取消'
+      });
+    });
+    },
     // handleView(id){
     //   this.dialogTransferVisible=true;
     //   getUserMenuTree(id).then(res=>{
@@ -262,14 +270,10 @@ export default {
         this.form.defaultCheckedKeys[i] = row.depts[i].id;
       }
     },
-    // handleDialogSure(){
-    //   var roles = [];
-    //   roles =this.checkIds.join(",");
-    //   updateUser(this.form.id, this.form.username,this.form.password,this.form.status,roles).then(res=>{
-    //     this.reload();
-    //     });
-    //     this.dialogFormVisible=false;
-    // },
+    handleDialogSure(){
+     
+    },
+    handleBatchDelete(){},
     closeDialog() {
       this.form.password = "";
       this.form.admin = "";
