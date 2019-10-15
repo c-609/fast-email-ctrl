@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import { getDeptTree } from "./../../../../api/right-managing/dept.js";
+import { getDeptTree,getDRId } from "./../../../../api/right-managing/dept.js";
 import BaseTreeSelect from "../../../common/BaseTreeSelect";
 import { getRoleList } from "./../../../../api/right-managing/role.js";
 import { addUser } from "../../../../api/right-managing/user.js";
@@ -96,6 +96,9 @@ export default {
     getRoleList(20, 1).then(data => {
       this.roles = data.data.data.records;
     });
+    getDRId().then(res=>{
+      this.DRData = res.data.data;
+    })
   },
   data() {
     var i = 0;
@@ -142,7 +145,8 @@ export default {
       }
     };
     return {
-      radio:1,
+      DRData:'',
+      radio:'1',
       roles: [],
       tags: [],
       treeDeptData: "",
@@ -193,12 +197,31 @@ export default {
       this.resetForm("userForm");
     },
     submitForm(formName) {
+      var userInfo =[];
+      for(var i=0; i<this.DRData.length; i++){
+        for(var j=0; j<this.tags.length; j++){
+           if(this.DRData[i].deptEntity.id == this.tags[j].deptId && this.DRData[i].roleEntity.id == this.tags[j].roleId){
+             userInfo.push({"id":this.DRData[i].deptRoleId,"deptId":this.tags[j].deptId, "roleId":this.tags[j].roleId}) 
+           }
+        }
+       
+      }
+      console.log(userInfo)
       if (this.tags.length == 0) {
         // this.hint = "请选择部门身份";
       } else {
         this.$refs[formName].validate(valid => {
           if (valid) {
-           
+            addUser(this.userForm.account, this.userForm.passWord1, this.userForm.name, this.userForm.tel, this.userForm.age, this.userForm.email, this.radio, userInfo).then(res =>{
+              if(res.data.code == 0 ){
+                this.$notify({
+                  message: '添加成功',
+                  type: 'success'
+                });
+                this.closeDialog();
+                this.reload();
+              }
+            })
           } else {
             return false;
           }

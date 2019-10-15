@@ -84,39 +84,42 @@
       ></el-tree>
     </el-dialog>
     <el-dialog title="编辑" :visible.sync="dialogFormVisible" @close="closeDialog">
-      <el-form :model="form" label-position="right" ref="form">
-        <el-form-item label="账号" :label-width="formLabelWidth">
-          <el-input v-model="form.username" autocomplete="off" :disabled="true"></el-input>
+      <el-form
+        size="mini"
+        :model="userForm"
+        status-icon
+        :rules="rules2"
+        ref="userForm"
+        label-width="80px"
+        class="demo-ruleForm"
+      >
+        <el-form-item label="*姓名" prop="name">
+          <el-input type="text" v-model="userForm.name" autocomplete="off" size="mini"></el-input>
         </el-form-item>
-        <el-form-item label="密码" :label-width="formLabelWidth">
-          <el-input v-model="form.password" autocomplete="off"></el-input>
+        <el-form-item label="电话" prop="tel">
+          <el-input type="text" v-model="userForm.tel" autocomplete="off" size="mini"></el-input>
         </el-form-item>
-        <el-form-item label="所属部门" :label-width="formLabelWidth">
+        <el-form-item label="年龄" prop="age">
+          <el-input type="text" v-model="userForm.age" autocomplete="off" size="mini"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input type="text" v-model="userForm.email" autocomplete="off" size="mini"></el-input>
+        </el-form-item>
+        <el-form-item label="性别" prop="gender">
+          <el-radio v-model="radio" label="1">男</el-radio>
+          <el-radio v-model="radio" label="2">女</el-radio>
+        </el-form-item>
+        <el-form-item label="部门身份">
           <base-tree-select
             :data="deptData"
+            :roles="roles"
+            :options="tags"
             :defaultProps="deptProps"
-            multiple
-            checkStrictly
-            :nodeKey="id"
-            :checkedKeys="form.defaultCheckedKeys"
-            @popoverHide="popoverHide"
           ></base-tree-select>
         </el-form-item>
-        <el-form-item label="角色标识" :label-width="formLabelWidth">
-          <el-checkbox-group v-model="checkIds">
-            <el-checkbox v-for="(item,index) in roles" :key="index" :label="item.id">{{item.nameZh}}</el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item label="用户状态" :label-width="formLabelWidth">
-          <el-switch
-            v-model="form.status"
-            active-color="#13ce66"
-            inactive-color="#ff4949"
-            :active-value="0"
-            :inactive-value="102"
-            active-text="有效"
-            inactive-text="锁定"
-          ></el-switch>
+        <el-form-item>
+          <el-button type="primary" @click="submitForm()">提交</el-button>
+          <el-button @click="resetForm()">重置</el-button>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -141,10 +144,11 @@
 </template>
 
 <script>
-import { getPageUser,deleteUser } from "./../../../../api/right-managing/user";
+import { getPageUser,deleteUser, updateUser } from "./../../../../api/right-managing/user";
 import eventBus from "./../../../../utils/eventBus.js";
 import BaseTreeSelect from "./UserDeptTree/../../../../common/BaseTreeSelect";
-import { getDeptTree } from "./../../../../api/right-managing/dept.js";
+import { getDeptTree,getDRId } from "./../../../../api/right-managing/dept.js";
+import { getRoleList, updateRole } from "./../../../../api/right-managing/role.js";
 export default {
   name: "UserTable",
   components: { BaseTreeSelect },
@@ -156,12 +160,68 @@ export default {
     eventBus.$on('tableData',(res)=>{
       this.Tables=res
       })
+    getDeptTree().then(res => {
+      this.deptData = res.data.data;
+    });
+    getRoleList(20, 1).then(data => {
+      this.roles = data.data.data.records;
+    });
+    getDRId().then(res=>{
+      this.DRData = res.data.data;
+    })
   },
   beforeDestroy() {
     eventBus.$off('tableData');
   },
   data() {
+    var i = 0;
+    var validateAcount = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("账户不能为空"));
+      } else {
+        for (i = 0; i < this.users.length; i++) {
+          if (this.userForm.account === this.users[i].username) {
+            callback(new Error("用户名已存在"));
+            break;
+          }
+        }
+        if (i >= this.users.length) {
+          this.$refs.userForm.validateField("passWord1");
+        }
+        callback();
+      }
+    };
+    var validatePass = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入密码"));
+      } else {
+        if (this.userForm.checkPass !== "") {
+          this.$refs.userForm.validateField("checkPass");
+        }
+        callback();
+      }
+    };
+    var validatePass2 = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请再次输入密码"));
+      } else if (value !== this.userForm.passWord1) {
+        callback(new Error("两次输入密码不一致!"));
+      } else {
+        callback();
+      }
+    };
+    var validateName = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("姓名不能为空"));
+      } else {
+        callback();
+      }
+    };
     return {
+      roles:"",
+      deptRoleId:[],
+      radio:'1',
+      tags: [],
       deptData: "",
       deptProps: {
         value: "id",
@@ -175,15 +235,34 @@ export default {
       dialogFormVisible: false,
       formLabelWidth: "120px",
       checkIds: [],
-      form: {
-        id: "",
-        username: "",
-        password: "",
+      userForm: {
+        userId: "",
+        passWord1: "",
+        passWord2: "",
+        dept: "",
         admin: "",
         superuser: "",
         user: "",
-        status: "",
-        defaultCheckedKeys: []
+        status: 0,
+        name:'',
+        tel:'',
+        gender:'',
+        age:'',
+        email:''
+      },
+      deptProps: {
+        value: "id",
+        label: "name",
+        children: "children"
+      },
+       rules2: {
+        account: [{ validator: validateAcount, trigger: "blur" }],
+        passWord2: [{ validator: validatePass2, trigger: "blur" }],
+        passWord1: [{ validator: validatePass, trigger: "blur" }],
+        name:[{ validator: validateName, trigger: "blur" }]
+        // dept: [
+        //   { validator: validateDept, trigger: 'blur' }
+        // ]
       },
       menuProps: {
         label: "name",
@@ -193,7 +272,7 @@ export default {
       dialogTransferVisible: false
     };
   },
-  props: ["header", "roles"],
+  props: ["header"],
  
 
   methods: {
@@ -258,28 +337,63 @@ export default {
     // },
     handleEdit(row) {
       this.dialogFormVisible = true;
-      //请求所属部门这里的树
-      getDeptTree().then(res => {
-        this.deptData = res.data.data;
-      }),
-        (this.form.username = row.username);
-      this.form.id = row.id;
-      this.form.status = row.status;
-      this.form.defaultCheckedKeys = [];
-      for (var i = 0; i < row.depts.length; i++) {
-        this.form.defaultCheckedKeys[i] = row.depts[i].id;
+      this.userForm.userId = row.userId;
+      this.userForm.name = row.name;
+      this.userForm.tel = row.phone;
+      this.userForm.age = row.age;
+      this.userForm.email = row.email;
+      this.radio = row.gender.toString();
+      for(var i=0; i<row.identityEntities.length; i++){
+        this.tags.push({
+          deptId:row.identityEntities[i].deptId,
+          deptName:row.identityEntities[i].deptName,  
+          name:row.identityEntities[i].deptName+"--"+row.identityEntities[i].roleCNName,  
+          roleId:row.identityEntities[i].roleId,
+          roleCNName:row.identityEntities[i].roleCNName,
+        })
       }
+      var userInfo =[];
+      for(var i=0; i<this.DRData.length; i++){
+        for(var j=0; j<this.tags.length; j++){
+           if(this.DRData[i].deptEntity.id == this.tags[j].deptId && this.DRData[i].roleEntity.id == this.tags[j].roleId){
+             userInfo.push({"deptRoleId":this.DRData[i].deptRoleId}) 
+           }
+        }
+      }
+      this.deptRoleId = userInfo;
+    },
+    submitForm(){
+      updateUser(this.userForm.userId, this.userForm.name, this.userForm.tel, this.radio, this.userForm.age, this.userForm.email, this.deptRoleId).then(res=>{
+        console.log(res.data);
+        if(res.data.code == 0 ){
+          this.$notify({
+            message: '添加成功',
+            type: 'success'
+          });
+          this.closeDialog();
+          this.reload();
+        }
+      }) 
+    },
+    resetForm(){
+      this.tags = [];
+      this.userForm.userId =  "";
+      this.userForm.name = "";
+      this.userForm.tel = "";
+      this.userForm.age = "";
+      this.userForm.email = "";
     },
     handleDialogSure(){
-     
+      
     },
     handleBatchDelete(){},
     closeDialog() {
-      this.form.password = "";
-      this.form.admin = "";
-      this.form.superuser = "";
-      this.form.user = "";
-      this.dialogFormVisible = false;
+      this.tags = [];
+      this.userForm.userId =  "";
+      this.userForm.name = "";
+      this.userForm.tel = "";
+      this.userForm.age = "";
+      this.userForm.email = "";
     }
   }
 };

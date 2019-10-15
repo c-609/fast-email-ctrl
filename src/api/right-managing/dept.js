@@ -67,3 +67,11 @@ export function getListByDeptId(deptIds) {
         methods: 'get'
     })
 }
+
+// 获取deptroleId
+export function getDRId() {
+    return request({
+        url: '/manage/role/dept',
+        methods: 'get'
+    })
+}
