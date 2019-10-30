@@ -62,7 +62,7 @@ export function deleteUser(uid) {
     return request({
         url: '/upms/user/delete',
         method: 'post',
-        params: { uid }
+        params: { uerId }
     })
 }
 

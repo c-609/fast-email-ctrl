@@ -197,20 +197,15 @@ export default {
       this.resetForm("userForm");
     },
     submitForm(formName) {
-<<<<<<< HEAD
-      console.log(this.tags);
-=======
       var userInfo =[];
       for(var i=0; i<this.DRData.length; i++){
         for(var j=0; j<this.tags.length; j++){
            if(this.DRData[i].deptEntity.id == this.tags[j].deptId && this.DRData[i].roleEntity.id == this.tags[j].roleId){
              userInfo.push({"id":this.DRData[i].deptRoleId,"deptId":this.tags[j].deptId, "roleId":this.tags[j].roleId}) 
            }
-        }
-       
+        }     
       }
       console.log(userInfo)
->>>>>>> c338ef2ffb129e3834cd41ab08157b9862564ace
       if (this.tags.length == 0) {
         // this.hint = "请选择部门身份";
       } else {

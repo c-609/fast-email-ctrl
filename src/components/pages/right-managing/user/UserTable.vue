@@ -20,29 +20,27 @@
       >
         <template slot-scope="scope">
           <div v-if="item.label=='身份'">
-            <el-popover
-              placement="right"
-              width="150"
-              trigger="hover">
-             <div v-for="(i,index) in scope.row[item.prop]" :key="index">
-              {{scope.row[item.prop][index].deptName}}{{scope.row[item.prop][index].roleCNName}}
-            </div>
+            <el-popover placement="right" width="150" trigger="hover">
+              <div
+                v-for="(i,index) in scope.row[item.prop]"
+                :key="index"
+              >{{scope.row[item.prop][index].deptName}}{{scope.row[item.prop][index].roleCNName}}</div>
               <el-button slot="reference" size="mini">查看</el-button>
             </el-popover>
             <!-- <div v-for="(i,index) in scope.row[item.prop]" :key="index">
               {{scope.row[item.prop][index].deptName}}{{scope.row[item.prop][index].roleCNName}}
-            </div> -->
+            </div>-->
           </div>
           <!-- <div v-else-if="item.type==1">
             {{scope.row[item.prop][0].nameZh}}
             <div v-for="(i,index) in scope.row[item.prop]" :key="index">
               {{scope.row[item.prop][index].nameZh}}
             </div>
-          </div> -->
+          </div>-->
           <!-- <div v-else-if="item.label=='状态'">
             <div v-if="scope.row[item.prop]==0">有效</div>
             <div v-if="scope.row[item.prop]==102">锁定</div>
-          </div> -->
+          </div>-->
           <div v-else-if="item.label=='性别'">
             <div v-if="scope.row[item.prop]==1">男</div>
             <div v-if="scope.row[item.prop]==2">女</div>
@@ -58,7 +56,7 @@
             type="text"
             size="small"
             v-if="item.prop=='operate'"
-          >查看</el-button> -->
+          >查看</el-button>-->
           <el-button
             @click="handleEdit( scope.row)"
             type="text"
@@ -66,7 +64,7 @@
             v-if="item.prop=='operate'"
           >编辑</el-button>
           <el-button
-            @click="handleDelete(scope.row.id)"
+            @click="handleDelete(scope.row.userId)"
             type="text"
             size="small"
             v-if="item.prop==='operate'"
@@ -117,14 +115,14 @@
             :defaultProps="deptProps"
           ></base-tree-select>
         </el-form-item>
-        <el-form-item>
+        <!-- <el-form-item>
           <el-button type="primary" @click="submitForm()">提交</el-button>
           <el-button @click="resetForm()">重置</el-button>
-        </el-form-item>
+        </el-form-item>-->
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="closeDialog">取 消</el-button>
-        <el-button type="primary" @click="handleDialogSure">确 定</el-button>
+        <el-button @click="resetForm">重 置</el-button>
+        <el-button type="primary" @click="submitForm('userForm')">提 交</el-button>
       </div>
     </el-dialog>
 
@@ -174,6 +172,42 @@ export default {
     eventBus.$off('tableData');
   },
   data() {
+     var checkName = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error("姓名不能为空"));
+      } else {
+        callback();
+      }
+    };
+     var checkTel = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error("电话不能为空"));
+      } else {
+        callback();
+      }
+    };
+     var checkAge = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('电话不能为空'));
+      } else {
+        callback();
+      }
+    };
+
+     var checkEmail = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error("邮箱不能为空"));
+      } else {
+        callback();
+      }
+    };
+     var checkDeptRoleId = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error("请选择部门身份"));
+      } else {
+        callback();
+      }
+    };
     var i = 0;
     var validateAcount = (rule, value, callback) => {
       if (value === "") {
@@ -256,13 +290,13 @@ export default {
         children: "children"
       },
        rules2: {
-        account: [{ validator: validateAcount, trigger: "blur" }],
-        passWord2: [{ validator: validatePass2, trigger: "blur" }],
-        passWord1: [{ validator: validatePass, trigger: "blur" }],
-        name:[{ validator: validateName, trigger: "blur" }]
-        // dept: [
-        //   { validator: validateDept, trigger: 'blur' }
-        // ]
+        name: [{required: true, validator: checkName, trigger: "blur" }],
+        tel: [{ required: true,validator: checkTel, trigger: "blur" }],
+        age: [{required: true, validator: checkAge, trigger: "blur" }],
+        email:[{ required: true,validator: checkEmail, trigger: "blur" }],
+        deptRoleId: [
+          {required: true, validator: checkDeptRoleId, trigger: 'blur' }
+        ]
       },
       menuProps: {
         label: "name",
@@ -271,6 +305,7 @@ export default {
       menuData: [],
       dialogTransferVisible: false
     };
+
   },
   props: ["header"],
  
@@ -314,12 +349,15 @@ export default {
       });
     },
     handleDelete(id) {
-      var _this = this;
+     console.log(id);
+     var _this = this;
       this.$confirm('是否删除此用户?', '提示', {
         confirmButtonText: '确定',
         type: 'warning'
     }).then(() => {
+     console.log(id);
       deleteUser(id).then((res)=>{
+        console.log(id)
         this.reload();
       });
     }).catch(() => {
@@ -362,38 +400,36 @@ export default {
       }
       this.deptRoleId = userInfo;
     },
-    submitForm(){
+    submitForm(formName){
+      this.$refs[formName].validate(valid => {
+          if (valid) {
       updateUser(this.userForm.userId, this.userForm.name, this.userForm.tel, this.radio, this.userForm.age, this.userForm.email, this.deptRoleId).then(res=>{
-        console.log(res.data);
         if(res.data.code == 0 ){
-          this.$notify({
-            message: '添加成功',
-            type: 'success'
+          this.$message({
+            message:res.data.msg,
+            type: 'info'
           });
           this.closeDialog();
           this.reload();
         }
-      }) 
+      }); }})
     },
     resetForm(){
       this.tags = [];
-      this.userForm.userId =  "";
-      this.userForm.name = "";
-      this.userForm.tel = "";
-      this.userForm.age = "";
-      this.userForm.email = "";
+      this.$refs['userForm'].resetFields();
     },
     handleDialogSure(){
       
     },
     handleBatchDelete(){},
     closeDialog() {
+     this.$refs['userForm'].resetFields();
       this.tags = [];
-      this.userForm.userId =  "";
-      this.userForm.name = "";
-      this.userForm.tel = "";
-      this.userForm.age = "";
-      this.userForm.email = "";
+      // this.userForm.userId =  "";
+      // this.userForm.name = "";
+      // this.userForm.tel = "";
+      // this.userForm.age = "";
+      // this.userForm.email = "";
     }
   }
 };
