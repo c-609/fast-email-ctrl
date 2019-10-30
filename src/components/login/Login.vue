@@ -94,7 +94,7 @@
                 },
                 checked: true,
                 loginForm: {
-                    acount:'admin1',
+                    acount:'asd',
                     pass:'123',
                     passcode: ''
                 },
@@ -131,29 +131,12 @@
                         if(this.loginForm.passcode==this.identifyCode){
                             this.loading = true;
                             var _this=this;
-                            this.$router.push('/home')
-                            // loginObj(this.loginForm.acount, this.loginForm.pass).then(res=>{
-                            //     _this.loading = false;
-                            //     console.log(res);
-                            //     if(!res){
-                            //     this.loginForm.acount='';
-                            //     this.loginForm.pass='';
-                            //     this.loginForm.passcode='';
-                            //     this.loading=false;
-                            //     this. refreshCode();
-                            //     }else
-                            //     if(res.data.code==0){               
-                            //         var data=res.data;      
-                            //         var path = this.$route.query.redirect;
-                            //         console.log(data.code);
-                            //         _this.$store.commit('login',data.code); //发送code登录状态   
-                            //         _this.$router.replace({
-                            //         path: path == '/' || path == undefined ? '/home' : path
-                            //         });
-                            //     }else{
-                            //        Message.error({message: '未知错误'});
-                            //     }
-                            // })
+                            
+                            loginObj(this.loginForm.acount,this.loginForm.pass).then(res=>{
+                                if(res.data.code == 0){
+                                    this.$router.push('/home')
+                                }
+                            })
                         }else{
                             this. refreshCode();
                             this.loginForm.passcode='';

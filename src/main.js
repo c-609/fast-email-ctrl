@@ -11,31 +11,29 @@ import '../theme/index.css'
 
 Vue.use(ElementUI)
 Vue.config.productionTip = false
-
-/* eslint-disable no-new */
+    // Axios.defaults.baseURL = 'http://119.29.101.166:9000'
+    /* eslint-disable no-new */
 new Vue({
-  el: '#app',
-  router,
-  store,
-  components: { App },
-  template: '<App/>'
+    el: '#app',
+    router,
+    store,
+    components: { App },
+    template: '<App/>'
 })
 
 router.beforeEach((to, from, next) => {
-  if (to.meta.requireAuth) {  // 判断该路由是否需要登录权限
-    var code=sessionStorage.getItem("code");
-    next();
-    // if(code==0){
-    //   next();
-    // }else{
-    //   next({ 
-    //     path: '/unlogin',
-    //     query: {redirect: to.fullPath} // 将跳转的路由path作为参数，登录成功后跳转到该路由
-    //   })
-    // }    
-  }
-  else {
-      next();
-  }
+    if (to.meta.requireAuth) { // 判断该路由是否需要登录权限
+        var code = sessionStorage.getItem("code");
+        next();
+        // if(code==0){
+        //   next();
+        // }else{
+        //   next({ 
+        //     path: '/unlogin',
+        //     query: {redirect: to.fullPath} // 将跳转的路由path作为参数，登录成功后跳转到该路由
+        //   })
+        // }    
+    } else {
+        next();
+    }
 })
-
