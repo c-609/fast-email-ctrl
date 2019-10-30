@@ -193,6 +193,7 @@ export default {
       this.resetForm("userForm");
     },
     submitForm(formName) {
+      console.log(this.tags);
       if (this.tags.length == 0) {
         // this.hint = "请选择部门身份";
       } else {
@@ -208,6 +209,7 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields();
       this.userForm.account = ""; //清空数据
+      this.userForm.passWord1 = "";
       this.userForm.passWord1 = "";
       this.userForm.passWord2 = "";
       this.userForm.dept = "";

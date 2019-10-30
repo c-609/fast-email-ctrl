@@ -48,6 +48,10 @@ export default {
           type: 'warning'
         }).then(() => {
           deleteDept(_this.id).then((res)=>{
+            if(res.data.msg!="删除成功") this.$message.error(res.data.msg);
+            else {
+              this.$message.success(res.data.msg);
+            }
             this.reload();
           });
         }).catch(() => {
