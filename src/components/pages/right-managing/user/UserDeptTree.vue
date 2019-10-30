@@ -41,8 +41,13 @@ export default {
   methods: {
     getNodeData(item){
       getListByDeptId(item.id).then(res=>{
-        console.log(res.data.data)
-        eventBus.$emit('tableData',res.data.data)
+        var data = [];
+        if(res.data.data != null) {
+          eventBus.$emit('tableData',res.data.data)
+        }else {
+          eventBus.$emit('tableData',data)
+        }
+        
       })
     }
     // renderContent(data){

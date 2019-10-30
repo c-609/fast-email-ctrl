@@ -20,7 +20,6 @@ export function addUser(username, password, name, phone, age, email, gender, ide
         "gender": gender,
         "identityEntities": identityEntities,
     }
-    console.log(data)
     return request({
         url: '/manage/user',
         method: 'post',
@@ -60,8 +59,8 @@ export function updateUser(userId, name, phone, gender, age, email, identityEnti
 //删除用户
 export function deleteUser(uid) {
     return request({
-        url: '/upms/user/delete',
-        method: 'post',
+        url: '/manage/user',
+        method: 'delete',
         params: { uerId }
     })
 }
