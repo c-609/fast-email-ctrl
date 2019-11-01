@@ -119,10 +119,22 @@ import {getRoleList, deleteRole,updateRole} from '../../../../api/right-managing
         item:'',
         options: [{
           value: '0',
-          label: '当前机构'
+          label: '同一级'
         }, {
           value: '1',
-          label: '同级机构'
+          label: '上一级'
+        } , {
+          value: '2',
+          label: '上二级'
+        } , {
+          value: '3',
+          label: '上三级'
+        } , {
+          value: '4',
+          label: '上四级'
+        } , {
+          value: '5',
+          label: '上五级'
         } 
         ],
         rules:{
@@ -203,16 +215,21 @@ import {getRoleList, deleteRole,updateRole} from '../../../../api/right-managing
             if(valid){
               let levelName = '';
               if(this.item == 0){
-                levelName = "当前部门"
+                levelName = "同一级"
               }else if(this.item == 1){
-                levelName = "同级部门"
+                levelName = "上一级"
+              }else if(this.item == 2){
+                levelName = "上二级"
+              }else if(this.item == 3){
+                levelName = "上三级"
+              }else if(this.item == 4){
+                levelName = "上四级"
+              }else if(this.item == 5){
+                levelName = "上五级"
               }else{
                 levelName = "weizhi"
               }
-              console.log(this.roleForm.id);
-              console.log( this.roleForm.role);
-              console.log(this.roleForm.roleZh)
-              updateRole(this.roleForm.id, this.roleForm.role, this.roleForm.roleZh,0,this.item,levelName,2).then((res)=>{
+              updateRole(this.roleForm.id, this.roleForm.roleZh, this.roleForm.role,0,this.item,levelName,2).then((res)=>{
                 console.log(res)
                 if(status!=200){
                   _this.$message({

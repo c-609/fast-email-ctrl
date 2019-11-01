@@ -57,11 +57,11 @@ export function updateUser(userId, name, phone, gender, age, email, identityEnti
     })
 }
 //删除用户
-export function deleteUser(uid) {
+export function deleteUser(userId) {
     return request({
         url: '/manage/user',
         method: 'delete',
-        params: { uerId }
+        params: { userId }
     })
 }
 

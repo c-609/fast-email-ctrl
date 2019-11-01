@@ -18,7 +18,6 @@
           :show-checkbox="true"
           node-key="id"
           check-strictly
-          default-expand-all
           :check-on-click-node="true"
           :highlight-current="true"
           @check="check"

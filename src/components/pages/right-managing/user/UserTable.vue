@@ -349,23 +349,32 @@ export default {
       });
     },
     handleDelete(id) {
-     console.log(id);
-     var _this = this;
+      var _this = this;
       this.$confirm('是否删除此用户?', '提示', {
         confirmButtonText: '确定',
+        cancelButtonText: '取消',
         type: 'warning'
-    }).then(() => {
-     console.log(id);
+      }).then(() => {
+        deleteUser(id).then(res=>{
+          if(status!=200){
+            _this.$message({
+              type:'info',
+              message:'删除成功' 
+            })
+          }
+        })
+        this.reload();
+      }).catch(() => {
+        _this.$message({
+          type: 'info',
+          message: '取消'
+        });
+      });
+    },
+    delete() {
       deleteUser(id).then((res)=>{
-        console.log(id)
         this.reload();
       });
-    }).catch(() => {
-      _this.$message({
-        type: 'info',
-        message: '取消'
-      });
-    });
     },
     // handleView(id){
     //   this.dialogTransferVisible=true;
