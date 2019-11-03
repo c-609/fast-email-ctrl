@@ -207,18 +207,27 @@ export default {
       }
       console.log(userInfo)
       if (this.tags.length == 0) {
-        // this.hint = "请选择部门身份";
+        this.$message({
+                  message:'请选择部门身份',
+                  type: 'error'
+                });
       } else {
         this.$refs[formName].validate(valid => {
           if (valid) {
             addUser(this.userForm.account, this.userForm.passWord1, this.userForm.name, this.userForm.tel, this.userForm.age, this.userForm.email, this.radio, userInfo).then(res =>{
               if(res.data.code == 0 ){
-                this.$notify({
+                this.$message({
                   message: '添加成功',
                   type: 'success'
                 });
                 this.closeDialog();
                 this.reload();
+              }
+              else{
+                this.$message({
+                  message: '添加失败，确认部门下是否有对应身份',
+                  type: 'error'
+                });
               }
             })
           } else {

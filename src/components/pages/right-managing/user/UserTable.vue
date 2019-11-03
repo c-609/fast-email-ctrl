@@ -356,9 +356,10 @@ export default {
         type: 'warning'
       }).then(() => {
         deleteUser(id).then(res=>{
+          console.log(res)
           if(status!=200){
             _this.$message({
-              type:'info',
+              type:'success',
               message:'删除成功' 
             })
           }
@@ -430,7 +431,9 @@ export default {
     handleDialogSure(){
       
     },
-    handleBatchDelete(){},
+    handleBatchDelete(){
+      
+    },
     closeDialog() {
      this.$refs['userForm'].resetFields();
       this.tags = [];

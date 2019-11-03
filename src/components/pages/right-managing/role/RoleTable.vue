@@ -77,7 +77,7 @@
       	<el-pagination background
             :current-page=currpage
           layout="prev, pager, next, sizes,total, jumper"
-          :page-sizes="[2, 4, 6, 8]"
+          :page-sizes="[10, 15, 20, 30]"
           :page-size="pagesize"
           :total="totalPage"
           @current-change="handleCurrentChange"  
@@ -143,7 +143,7 @@ import {getRoleList, deleteRole,updateRole} from '../../../../api/right-managing
         Tables:[],
         search: '',  
         totalPage:"", 
-        pagesize: 4,
+        pagesize: 10,
 		    currpage: 1,
         dialogTransferVisible: false,
         deptData: [],
